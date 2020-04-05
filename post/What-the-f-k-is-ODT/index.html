@@ -1,0 +1,657 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>浅谈珂学数据结构——珂朵莉树 | Gridea</title>
+<link rel="shortcut icon" href="https://thomasguo666.github.io/favicon.ico?v=1586070383880">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://thomasguo666.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="浅谈珂学数据结构——珂朵莉树 | Gridea - Atom Feed" href="https://thomasguo666.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="珂朵莉树
+珂朵莉树是一种基于平衡树的暴力数据结构。一般用std::set来实现。
+什么时候用珂朵莉树：
+
+当有区间赋值操作时
+当有区间幂次和等线段树树状数组显然不能胜任的操作时
+
+定义
+珂朵莉树是把连续的一段值相同的区间当作一个节点对待。下..." />
+    <meta name="keywords" content="数据结构,骗分,暴力" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://thomasguo666.github.io">
+  <img class="avatar" src="https://thomasguo666.github.io/images/avatar.png?v=1586070383880" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              浅谈珂学数据结构——珂朵莉树
+            </h2>
+            <div class="post-info">
+              <span>
+                2019-07-29
+              </span>
+              <span>
+                15 min read
+              </span>
+              
+                <a href="https://thomasguo666.github.io/tag/wxrzERauw/" class="post-tag">
+                  # 数据结构
+                </a>
+              
+                <a href="https://thomasguo666.github.io/tag/7PlxlQZJWw/" class="post-tag">
+                  # 骗分
+                </a>
+              
+                <a href="https://thomasguo666.github.io/tag/zK4GY26Z6R/" class="post-tag">
+                  # 暴力
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <h1 id="珂朵莉树">珂朵莉树</h1>
+<p>珂朵莉树是一种基于平衡树的暴力数据结构。一般用std::set来实现。</p>
+<h2 id="什么时候用珂朵莉树">什么时候用珂朵莉树：</h2>
+<ol>
+<li>当有区间赋值操作时</li>
+<li>当有区间幂次和等线段树树状数组显然不能胜任的操作时</li>
+</ol>
+<h2 id="定义">定义</h2>
+<p>珂朵莉树是把连续的一段值相同的区间当作一个节点对待。下面是一个节点的定义</p>
+<pre><code class="language-c++">typedef long long ll;
+struct node
+{
+	int l,r;//节点的左、右端点
+	mutable ll v;//如果不加mutable修饰符，那么v变量初始化后就不能修改了。
+	node (int l,int r=-1,ll v=0):l(l),r(r),v(v) {}//构造函数
+	bool operator &lt;(const node &amp;rhs) const
+	{
+	    return l&lt;rhs.l;
+	}
+};
+set&lt;node&gt; s;
+</code></pre>
+<h2 id="基本操作">基本操作</h2>
+<h3 id="初始化">初始化</h3>
+<pre><code class="language-c++">for (int i=1;i&lt;=n;i++) s.insert(node(i,i,a[i]));
+</code></pre>
+<h3 id="重要区间分裂">重要：区间分裂</h3>
+<p>就是把包含mid的区间[l,r]分裂成[l,mid-1]和[mid,r]，并返回[mid,r]的指针。</p>
+<p>具体来讲，是先把区间[l,r]删去，再分别把区间[l,mid),和[mid,r]加入。</p>
+<figure data-type="image" tabindex="1"><img src="https://i.loli.net/2019/02/03/5c56eb626b143.png" alt="" loading="lazy"></figure>
+<pre><code class="language-c++">typedef set&lt;node&gt;::iterator IT;
+IT split(int mid)
+{
+    IT it=s.lower_bound(node(mid));//寻找第一个左端点大于等于k的区间。
+    if (it!=s.end()&amp;&amp;it-&gt;l==mid) return it; //如果找到的这个区间的左端点就是mid那么就返回这个区间的指针。
+    --it;//否则mid一定在上一个区间里
+    int l=it-&gt;l,r=it-&gt;r;
+    ll v=it-&gt;v;
+    s.erase(it);//删掉区间[l,r]
+    s.insert(node(l,mid-1,v));//插入区间[l,mid-1]
+    return s.insert(node(mid,r,v)).first; //s.insert()返回的其实是一个pair，其中的first是变量的指针。
+}
+</code></pre>
+<h3 id="核心区间赋值">核心：区间赋值</h3>
+<p>就是把区间[l,r]的值全都改为v。</p>
+<figure data-type="image" tabindex="2"><img src="https://i.loli.net/2019/02/03/5c56ecd2e058f.png" alt="" loading="lazy"></figure>
+<p>区间赋为5后</p>
+<figure data-type="image" tabindex="3"><img src="https://i.loli.net/2019/02/03/5c56edab6e31d.png" alt="" loading="lazy"></figure>
+<pre><code class="language-c++">void assign(int _l,int _r,ll v)
+{
+    IT r=split(_r+1),l=split(_l); //重点！一定要按照这个次序，否则可能会导致指针失效而RE，下同
+    s.erase(l,r); //删除区间[l,r+1)，是一个方便但比较少见的操作
+    s.insert(node(_l,_r,v));
+}
+</code></pre>
+<p>这个操作直接使set的大小接近n/k。具体证明见<a href="https://codeforces.com/blog/entry/56135?#comment-398940">这里</a>。但是如果不保证数据随机，那这玩意八成要GG。</p>
+<p>其他的操作就可以用暴力了，这里讲几个常见的。</p>
+<h3 id="区间加">区间加</h3>
+<p>直接加就行了，十分暴力</p>
+<pre><code class="language-c++">void add(int _l,int _r,ll v)
+{
+    IT r=split(_r+1),l=split(_l);
+    for (;l!=r;l++) l-&gt;v+=v;
+}
+</code></pre>
+<h3 id="区间k小值">区间k小值</h3>
+<p>把区间里每段拿出来排个序就行了。</p>
+<pre><code class="language-c++">ll kth(int _l,int _r,int k)
+{
+    IT r=split(_r+1),l=split(_l); //把区间里
+    vector&lt;pair&lt;ll,int&gt; &gt; v;
+    v.clear();
+    for (;l!=r;l++) v.push_back(pair&lt;ll,int&gt;(l-&gt;v,l-&gt;r-l-&gt;l+1));// 每段拿出来
+    sort(v.begin(),v.end());// 排个序
+    for (vector&lt;pair&lt;ll,int&gt; &gt;::iterator it=v.begin();it!=v.end();it++)
+    {
+        k-=it-&gt;second;
+        if (k&lt;=0) return it-&gt;first; //就行了
+    }
+}
+</code></pre>
+<h3 id="区间幂次和">区间幂次和</h3>
+<p>直接快速幂就行了。</p>
+<pre><code class="language-c++">ll sum(int _l,int _r,int x,int y)
+{
+    IT r=split(_r+1),l=split(_l);
+    ll ans=0;
+    for (;l!=r;l++) 
+    {
+        ans=((ans+(ll)(l-&gt;r-l-&gt;l+1)*qpow(l-&gt;v,(ll)x,(ll)y))%y+y)%y;
+    }
+    return ans;
+}
+</code></pre>
+<p>从以上几个操作我们可以看出，珂朵莉树不仅有代码量小，易调试的优点，并且还可以解决许多线段树树状数组等数据结构无法（或难以）胜任的问题。</p>
+<p>例题：</p>
+<p><a href="https://www.luogu.org/problemnew/show/CF896C">CF896C</a> 模板题</p>
+<p>代码：</p>
+<pre><code class="language-c++">#include &lt;bits/stdc++.h&gt;
+#define IT set&lt;node&gt;::iterator
+using namespace std;
+typedef long long ll;
+int p=1000000007;
+ll qpow(ll a,ll k,ll p)
+{
+    a%=p;
+    ll ans=1;
+    while (k)
+    {
+        if (k&amp;1) ans=ans*a%p;
+        a=a*a%p;
+        k&gt;&gt;=1;
+    }
+    return ans;
+}
+struct node
+{
+	int l,r;
+	mutable ll v;
+	node (int l,int r=-1,ll v=0):l(l),r(r),v(v) {}
+	bool operator &lt;(const node &amp;rhs) const
+	{
+	    return l&lt;rhs.l;
+	}
+};
+set&lt;node&gt; s;
+IT split(int k)
+{
+    IT it=s.lower_bound(node(k));
+    if (it!=s.end()&amp;&amp;it-&gt;l==k) return it;
+    --it;
+    int l=it-&gt;l,r=it-&gt;r;
+    ll v=it-&gt;v;
+    s.erase(it);
+    s.insert(node(l,k-1,v));
+    return s.insert(node(k,r,v)).first;
+}
+void add(int _l,int _r,ll v)
+{
+    IT r=split(_r+1),l=split(_l);
+    for (;l!=r;l++) l-&gt;v+=v;
+}
+void assign(int _l,int _r,ll v)
+{
+    IT r=split(_r+1),l=split(_l);
+    s.erase(l,r);
+    s.insert(node(_l,_r,v));
+}
+ll kth(int _l,int _r,int k)
+{
+    IT r=split(_r+1),l=split(_l);
+    vector&lt;pair&lt;ll,int&gt; &gt; v;
+    v.clear();
+    for (;l!=r;l++) v.push_back(pair&lt;ll,int&gt;(l-&gt;v,l-&gt;r-l-&gt;l+1));
+    sort(v.begin(),v.end());
+    for (vector&lt;pair&lt;ll,int&gt; &gt;::iterator it=v.begin();it!=v.end();it++)
+    {
+        k-=it-&gt;second;
+        if (k&lt;=0) return it-&gt;first;
+    }
+}
+ll sum(int _l,int _r,int x,int y)
+{
+    IT r=split(_r+1),l=split(_l);
+    ll ans=0;
+    for (;l!=r;l++) 
+    {
+        ans=((ans+(ll)(l-&gt;r-l-&gt;l+1)*qpow(l-&gt;v,(ll)x,(ll)y))%y+y)%y;
+    }
+    return ans;
+}
+int n,m;
+ll seed,vmax;
+ll a[100005];
+ll rnd()
+{
+    ll ans=seed;
+    seed=(seed*7+13)%p;
+    return ans;
+}
+int main()
+{
+    cin&gt;&gt;n&gt;&gt;m&gt;&gt;seed&gt;&gt;vmax;
+    for (int i=1;i&lt;=n;i++) a[i]=(rnd()%vmax)+1,s.insert(node(i,i,a[i]));
+	s.insert(node(n+1,n+1,0));
+	for (int i=1;i&lt;=m;i++)
+    {
+        int op=int(rnd()%4)+1,l=int(rnd()%n)+1,r=int(rnd()%n)+1,x,y;
+        if (l&gt;r) swap(l,r);
+        if (op==3) x=int(rnd()%(r-l+1))+1;
+        else x=int(rnd()%vmax)+1;
+        if (op==4) y=int(rnd()%vmax)+1;
+        if (op==1) add(l,r,ll(x));
+        else if (op==2) assign(l,r,ll(x));
+        else if (op==3) cout&lt;&lt;kth(l,r,x)&lt;&lt;endl;
+        else cout&lt;&lt;sum(l,r,x,y)&lt;&lt;endl;
+    }
+    return 0;
+}
+</code></pre>
+<p><a href="https://www.luogu.org/problemnew/show/P2146">软件包管理器</a> 树链剖分，吸口氧能过</p>
+<p>代码：</p>
+<pre><code class="language-c++">//luogu-judger-enable-O2
+#include &lt;bits/stdc++.h&gt;
+using namespace std;
+inline int read()
+{
+    char c=getchar();int ans=0;
+    for (;!isdigit(c);c=getchar());
+    for (;isdigit(c);c=getchar()) ans=(ans&lt;&lt;3)+(ans&lt;&lt;1)+c-48;
+    return ans;
+}
+int dep[100005],top[100005],l[100005],sz[100005],fa[100005],son[100005],b[100005],a[100005];
+vector&lt;int&gt; G[100005];
+void dfs1(int u)
+{
+    sz[u]=1;
+    for (register int i=0;i&lt;G[u].size();i++) 
+    {
+        int v=G[u][i];
+        if (v==fa[u]) continue;
+        dep[v]=dep[u]+1,fa[v]=u;
+        dfs1(v),sz[u]+=sz[v];
+        if (sz[v]&gt;sz[son[u]]) son[u]=v;
+    }
+}
+int tot=0;
+void dfs2(int u,int h)
+{
+    l[u]=++tot,a[tot]=b[u],top[u]=h;
+    if (!son[u]) return ;
+    dfs2(son[u],h);
+    for (register int i=0;i&lt;G[u].size();i++)
+    {
+        int v=G[u][i];
+        if (v==fa[u] || v==son[u]) continue;
+        dfs2(v,v);
+    }
+}
+struct node
+{
+    int l,r;
+    mutable int v;
+    node (int l,int r=-1,int v=0):l(l),r(r),v(v) {}
+    bool operator &lt; (const node &amp;rhs) const
+    {
+        return l&lt;rhs.l;
+    }
+};
+set&lt;node&gt; s;
+typedef set&lt;node&gt;::iterator IT;
+inline IT split(int k)
+{
+    IT it=s.lower_bound(node(k));
+    if (it!=s.end() &amp;&amp; it-&gt;l==k) return it;
+    --it;
+    int l=it-&gt;l,r=it-&gt;r,v=it-&gt;v;
+    s.erase(it);
+    s.insert(node(l,k-1,v));
+    return s.insert(node(k,r,v)).first;
+}
+inline int assign(int l,int r,int v)
+{
+    IT rp=split(r+1),lp=split(l);
+    int before=0,after=(r-l+1)*v;
+    for (register IT it=lp;it!=rp;it++) before+=(it-&gt;r-it-&gt;l+1)*(it-&gt;v);
+    s.erase(lp,rp);
+    s.insert(node(l,r,v));
+    return abs(after-before); //assign的同时要计算改变了多少个安装包的状态。
+}
+inline int install(int u,int v)
+{
+    int ans=0;
+    while (top[u]!=top[v])
+    {
+        if (dep[top[u]]&lt;dep[top[v]]) swap(u,v);
+        ans+=assign(l[top[u]],l[u],1);
+        u=fa[top[u]];
+    }
+    if (dep[u]&gt;dep[v]) swap(u,v);
+    ans+=assign(l[u],l[v],1);
+    return ans;
+}
+inline int uninstall(int u)
+{
+    return assign(l[u],l[u]+sz[u]-1,0);
+}
+inline void addedge(int u,int v)
+{
+    G[u].push_back(v),G[v].push_back(u);
+}
+int main()
+{
+    int n,m;
+    n=read();
+    s.insert(node(1,n+1,0)); 
+    for (register int i=2;i&lt;=n;i++) addedge(i,read()+1);//所有软件包编号加一，方便计算。
+    m=read();
+    dfs1(1);
+    dfs2(1,1);
+    for (register int i=1;i&lt;=m;i++)
+    {
+        char opt[20];
+        scanf(&quot;%s&quot;,opt);
+        int x=read();
+        if (opt[0]=='i') printf(&quot;%d\n&quot;,install(x+1,1));
+        else printf(&quot;%d\n&quot;,uninstall(x+1));
+     } 
+    return 0;
+}
+</code></pre>
+<p><a href="https://www.luogu.org/problemnew/show/P2486">染色</a> 同样是树链剖分，然而比较困难的地方在于信息的整合，看注释：</p>
+<p>代码:</p>
+<pre><code class="language-c++">#include &lt;bits/stdc++.h&gt;
+using namespace std;
+int read()
+{
+    char c=getchar();int ans=0,f=1;
+    for (;!isdigit(c);c=getchar()) if (c=='-') f=-1;
+    for (;isdigit(c);c=getchar()) ans=(ans&lt;&lt;3)+(ans&lt;&lt;1)+c-48;
+    return ans*f;
+}
+struct data
+{
+	int lc,rc,len;
+	data (int lc=0,int rc=0,int len=0):lc(lc),rc(rc),len(len) {};
+	data operator + (const data &amp;rhs) const //整合信息
+	{
+		data ans;
+		if (!len) return rhs;
+		if (!(rhs.len)) return data(lc,rc,len); //如果有一段长度为0，就返回另一段
+		if (rc==rhs.lc) ans.len=len+rhs.len-1; //如果两段的端点是一种颜色，那么段数减一
+		else ans.len=len+rhs.len; //否则段数不变
+		ans.lc=lc,ans.rc=rhs.rc;
+		return ans;
+	}
+};
+struct node
+{
+	int l,r;
+	mutable int v;
+	node (int l,int r=-1,int v=0):l(l),r(r),v(v) {}
+	bool operator &lt; (const node &amp;rhs) const
+	{
+		return l&lt;rhs.l;
+	}
+};
+set&lt;node&gt; s;
+typedef set&lt;node&gt;::iterator IT;
+IT split(int k)
+{
+	IT it=s.lower_bound(node(k));
+	if (it!=s.end() &amp;&amp; it-&gt;l==k) return it;
+	--it;
+	int l=it-&gt;l,r=it-&gt;r,v=it-&gt;v;
+	s.erase(it);
+	s.insert(node(l,k-1,v));
+	return s.insert(node(k,r,v)).first;
+}
+void assign(int l,int r,int v)
+{
+	IT rp=split(r+1),lp=split(l);
+	s.erase(lp,rp);
+	s.insert(node(l,r,v));
+}
+data query(int l,int r)
+{
+	IT rp=split(r+1),lp=split(l);
+	data ans;
+	for (IT it=lp;it!=rp;it++)
+	{
+		ans=ans+data(it-&gt;v,it-&gt;v,1);
+	}
+	return ans;
+}
+int l[100005],fa[100005],son[100005],dep[100005],sz[100005],top[100005],a[100005],b[100005];
+vector&lt;int&gt; G[100005];
+void dfs1(int u)
+{
+	sz[u]=1;
+	for (int i=0;i&lt;G[u].size();i++)
+	{
+		int v=G[u][i];
+		if (sz[v]) continue;
+		dep[v]=dep[u]+1,fa[v]=u;
+		dfs1(v),sz[u]+=sz[v];
+		if (sz[v]&gt;sz[son[u]]) son[u]=v;
+	}
+}
+int tot=0;
+void dfs2(int u,int h)
+{
+	l[u]=++tot,a[tot]=b[u],top[u]=h;
+	if (!son[u]) return;
+	dfs2(son[u],h);
+	for (int i=0;i&lt;G[u].size();i++)
+	{
+		int v=G[u][i];
+		if (v!=fa[u]&amp;&amp;v!=son[u]) dfs2(v,v);
+	}
+}
+void upd(int u,int v,int k)
+{
+	while(top[u]!=top[v])
+	{
+		if (dep[top[u]]&lt;dep[top[v]]) swap(u,v);
+		assign(l[top[u]],l[u],k);
+		u=fa[top[u]];
+	}
+	if (dep[u]&gt;dep[v]) swap(u,v);
+	assign(l[u],l[v],k);
+}
+int qnum(int u,int v)
+{
+	data a,b; //a负责存储u这边的信息，b负责存储v这边的信息，讨厌的地方在于不能swap
+	while (top[u]!=top[v])
+	{
+		if (dep[top[u]]&lt;dep[top[v]]) b=query(l[top[v]],l[v])+b,v=fa[top[v]];
+		else a=query(l[top[u]],l[u])+a,u=fa[top[u]];
+	}
+	if (dep[u]&gt;dep[v]) a=query(l[v],l[u])+a;
+	else b=query(l[u],l[v])+b;
+	swap(a.lc,a.rc);
+	return (a+b).len;
+}
+void addedge(int u,int v)
+{
+	G[u].push_back(v),G[v].push_back(u);
+}
+int main()
+{
+	int n=read(),m=read();
+	for (int i=1;i&lt;=n;i++) b[i]=read();
+	for (int i=1;i&lt;n;i++) addedge(read(),read());
+	dfs1(1);
+	dfs2(1,1);
+	for (int i=1;i&lt;=n;i++) s.insert(node(i,i,a[i]));
+	for (int i=1;i&lt;=m;i++)
+	{
+		char opt;
+		int x,y,z;
+		opt=getchar(),x=read(),y=read();
+		if (opt=='C')
+		{
+			z=read();
+			upd(x,y,z);
+		}
+		else printf(&quot;%d\n&quot;,qnum(x,y));
+	}
+	return 0;
+} 
+</code></pre>
+<p>完结撒花！！！<em>★,°</em>:.☆(￣▽￣)/$:<em>.°★</em> 。</p>
+<p>（P.S. 按照yfz的说法，有一种复杂度正确的ODT，然而我不会……）</p>
+<p>（再P.S. 如果窝学会了这个东西会找时间写的）</p>
+
+              </div>
+              <div class="toc-container">
+                <ul class="markdownIt-TOC">
+<li><a href="#%E7%8F%82%E6%9C%B5%E8%8E%89%E6%A0%91">珂朵莉树</a>
+<ul>
+<li><a href="#%E4%BB%80%E4%B9%88%E6%97%B6%E5%80%99%E7%94%A8%E7%8F%82%E6%9C%B5%E8%8E%89%E6%A0%91">什么时候用珂朵莉树：</a></li>
+<li><a href="#%E5%AE%9A%E4%B9%89">定义</a></li>
+<li><a href="#%E5%9F%BA%E6%9C%AC%E6%93%8D%E4%BD%9C">基本操作</a>
+<ul>
+<li><a href="#%E5%88%9D%E5%A7%8B%E5%8C%96">初始化</a></li>
+<li><a href="#%E9%87%8D%E8%A6%81%E5%8C%BA%E9%97%B4%E5%88%86%E8%A3%82">重要：区间分裂</a></li>
+<li><a href="#%E6%A0%B8%E5%BF%83%E5%8C%BA%E9%97%B4%E8%B5%8B%E5%80%BC">核心：区间赋值</a></li>
+<li><a href="#%E5%8C%BA%E9%97%B4%E5%8A%A0">区间加</a></li>
+<li><a href="#%E5%8C%BA%E9%97%B4k%E5%B0%8F%E5%80%BC">区间k小值</a></li>
+<li><a href="#%E5%8C%BA%E9%97%B4%E5%B9%82%E6%AC%A1%E5%92%8C">区间幂次和</a></li>
+</ul>
+</li>
+</ul>
+</li>
+</ul>
+
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://thomasguo666.github.io/post/solution-P3628/">
+              <h3 class="post-title">
+                题解 P3628 【[APIO2010]特别行动队】
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://thomasguo666.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>

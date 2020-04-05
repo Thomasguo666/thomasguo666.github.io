@@ -1,0 +1,223 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>题解 P2657 【[SCOI2009]windy数】 | Gridea</title>
+<link rel="shortcut icon" href="https://thomasguo666.github.io/favicon.ico?v=1586070383880">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://thomasguo666.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="题解 P2657 【[SCOI2009]windy数】 | Gridea - Atom Feed" href="https://thomasguo666.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="一道裸的数位DP题
+pos记录搜到了数的第几位，pre记录前一位是哪个数字，lead记录上一位是不是前导零，limit记录上一位是否有最高位限制（也就是这位是否有可能超出搜索的上限）。
+#include &lt;bits/stdc++.h&..." />
+    <meta name="keywords" content="dp,数位dp,题解" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://thomasguo666.github.io">
+  <img class="avatar" src="https://thomasguo666.github.io/images/avatar.png?v=1586070383880" alt="">
+  </a>
+  <h1 class="site-title">
+    Gridea
+  </h1>
+  <p class="site-description">
+    温故而知新
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              题解 P2657 【[SCOI2009]windy数】
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-04-05
+              </span>
+              <span>
+                2 min read
+              </span>
+              
+                <a href="https://thomasguo666.github.io/tag/8DHT2vKuS/" class="post-tag">
+                  # dp
+                </a>
+              
+                <a href="https://thomasguo666.github.io/tag/ubLoUixHrW/" class="post-tag">
+                  # 数位dp
+                </a>
+              
+                <a href="https://thomasguo666.github.io/tag/ykwNtVIB_F/" class="post-tag">
+                  # 题解
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>一道裸的数位DP题</p>
+<p>pos记录搜到了数的第几位，pre记录前一位是哪个数字，lead记录上一位是不是前导零，limit记录上一位是否有最高位限制（也就是这位是否有可能超出搜索的上限）。</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+#define debug printf(&quot;Running %s on line %d...\n&quot;,__FUNCTION__,__LINE__)
+#define in inline
+#define re register
+using namespace std;
+typedef long long ll;
+typedef double db;
+in int read()
+{
+    int ans=0,f=1;char c=getchar();
+    for (;!isdigit(c);c=getchar()) if (c=='-') f=-1;
+    for (;isdigit(c);c=getchar()) ans=(ans&lt;&lt;3)+(ans&lt;&lt;1)+(c^48);
+    return ans*f;
+}
+int a[15],len;
+int f[15][15];
+int dfs(int pos,int pre,int lead,int limit)
+{
+    if (pos&gt;len) return 1;
+    if ((!lead)&amp;&amp;(!limit)&amp;&amp;(f[pos][pre]!=-1)) return f[pos][pre];
+    int res=limit?a[len-pos+1]:9;
+    int ans=0;
+    for (int i=0;i&lt;=res;i++)
+    {
+        if ((!lead)&amp;&amp;abs(i-pre)&lt;2) continue;
+        ans+=dfs(pos+1,i,(lead&amp;&amp;!i),limit&amp;&amp;(i==res));
+    }
+    return ((!lead)&amp;&amp;(!limit))?f[pos][pre]=ans:ans;
+}
+int solve(int x)
+{
+    len=0;
+    while (x) a[++len]=x%10,x/=10;
+    memset(f,-1,sizeof(f));
+    return dfs(1,0,1,1);
+}
+int main()
+{
+    int a=read(),b=read();
+    cout&lt;&lt;solve(b)-solve(a-1)&lt;&lt;endl;
+    return 0;
+}
+</code></pre>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://thomasguo666.github.io/post/solution-P4178/">
+              <h3 class="post-title">
+                题解 P4178 【Tree】
+              </h3>
+            </a>
+          </div>
+        
+
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://thomasguo666.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
