@@ -1,0 +1,346 @@
+<html>
+  <head>
+    <meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>题解 CF1009F 【Dominant Indices】 | Thomasguo666的小屋</title>
+<link rel="shortcut icon" href="https://thomasguo666.github.io/favicon.ico?v=1586352153708">
+<link href="https://cdn.jsdelivr.net/npm/remixicon@2.3.0/fonts/remixicon.css" rel="stylesheet">
+<link rel="stylesheet" href="https://thomasguo666.github.io/styles/main.css">
+<link rel="alternate" type="application/atom+xml" title="题解 CF1009F 【Dominant Indices】 | Thomasguo666的小屋 - Atom Feed" href="https://thomasguo666.github.io/atom.xml">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Droid+Serif:400,700">
+
+
+
+    <meta name="description" content="首先这个题可以想到是一个DP。状态设计：fu,depf_{u,dep}fu,dep​ 表示 u 的子树中与 u 距离为 dep 的点的个数。
+转移方程如下:
+fu,dep=∑v∈sonufv,dep−1f_{u,dep}=\sum_{v \..." />
+    <meta name="keywords" content="长链剖分,树链剖分,dp,树形结构" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/KaTeX/0.10.0/katex.min.css">
+    <script src="https://cdn.bootcss.com/highlight.js/9.12.0/highlight.min.js"></script>
+  </head>
+  <body>
+    <div class="main">
+      <div class="main-content">
+        <div class="site-header">
+  <a href="https://thomasguo666.github.io">
+  <img class="avatar" src="https://thomasguo666.github.io/images/avatar.png?v=1586352153708" alt="">
+  </a>
+  <h1 class="site-title">
+    Thomasguo666的小屋
+  </h1>
+  <p class="site-description">
+    Знамя советское, знамя народное!
+  </p>
+  <div class="menu-container">
+    
+      
+        <a href="/" class="menu">
+          首页
+        </a>
+      
+    
+      
+        <a href="/archives" class="menu">
+          归档
+        </a>
+      
+    
+      
+        <a href="/tags" class="menu">
+          标签
+        </a>
+      
+    
+      
+        <a href="/post/about" class="menu">
+          关于
+        </a>
+      
+    
+  </div>
+  <div class="social-container">
+    
+      
+    
+      
+    
+      
+    
+      
+    
+      
+    
+  </div>
+</div>
+
+        <div class="post-detail">
+          <article class="post">
+            <h2 class="post-title">
+              题解 CF1009F 【Dominant Indices】
+            </h2>
+            <div class="post-info">
+              <span>
+                2020-04-08
+              </span>
+              <span>
+                7 min read
+              </span>
+              
+                <a href="https://thomasguo666.github.io/tag/zL6s4Usfx/" class="post-tag">
+                  # 长链剖分
+                </a>
+              
+                <a href="https://thomasguo666.github.io/tag/J0jrmUYU_X/" class="post-tag">
+                  # 树链剖分
+                </a>
+              
+                <a href="https://thomasguo666.github.io/tag/8DHT2vKuS/" class="post-tag">
+                  # dp
+                </a>
+              
+                <a href="https://thomasguo666.github.io/tag/Qh7CVyFsto/" class="post-tag">
+                  # 树形结构
+                </a>
+              
+            </div>
+            
+            <div class="post-content-wrapper">
+              <div class="post-content">
+                <p>首先这个题可以想到是一个DP。状态设计：<span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mrow><mi>u</mi><mo separator="true">,</mo><mi>d</mi><mi>e</mi><mi>p</mi></mrow></msub></mrow><annotation encoding="application/x-tex">f_{u,dep}</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">u</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">p</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span> 表示 u 的子树中与 u 距离为 dep 的点的个数。<br>
+转移方程如下:</p>
+<p class='katex-block'><span class="katex-display"><span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mrow><mi>u</mi><mo separator="true">,</mo><mi>d</mi><mi>e</mi><mi>p</mi></mrow></msub><mo>=</mo><munder><mo>∑</mo><mrow><mi>v</mi><mo>∈</mo><mi>s</mi><mi>o</mi><msub><mi>n</mi><mi>u</mi></msub></mrow></munder><msub><mi>f</mi><mrow><mi>v</mi><mo separator="true">,</mo><mi>d</mi><mi>e</mi><mi>p</mi><mo>−</mo><mn>1</mn></mrow></msub></mrow><annotation encoding="application/x-tex">f_{u,dep}=\sum_{v \in son_u} f_{v,dep-1}
+</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">u</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">p</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:2.40011em;vertical-align:-1.350105em;"></span><span class="mop op-limits"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:1.050005em;"><span style="top:-1.8999949999999999em;margin-left:0em;"><span class="pstrut" style="height:3.05em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">v</span><span class="mrel mtight">∈</span><span class="mord mathdefault mtight">s</span><span class="mord mathdefault mtight">o</span><span class="mord mtight"><span class="mord mathdefault mtight">n</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span><span style="top:-3.0500049999999996em;"><span class="pstrut" style="height:3.05em;"></span><span><span class="mop op-symbol large-op">∑</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:1.350105em;"><span></span></span></span></span></span><span class="mspace" style="margin-right:0.16666666666666666em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.3361079999999999em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">v</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">d</span><span class="mord mathdefault mtight">e</span><span class="mord mathdefault mtight">p</span><span class="mbin mtight">−</span><span class="mord mtight">1</span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span></span></span></span></span></p>
+<p>然而如果直接暴力转移的话显然会 T 飞或者 M 飞，，所以我们需要一点点的优化。</p>
+<hr>
+<p>引入一个概念：<strong>长链剖分</strong></p>
+<p>我们可以找到一个结点 u 的子树中，到这个节点距离最大的叶子节点。将两点之间的距离计为 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>d</mi><mi>e</mi><msub><mi>p</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">dep_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord mathdefault">d</span><span class="mord mathdefault">e</span><span class="mord"><span class="mord mathdefault">p</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 。那么对于一个节点 u，我们把他的所有孩子中 dep 值最大的称作这个节点的 <strong>长儿子</strong>。</p>
+<p>从一个节点开始，每次走向他的长儿子，一直走到叶子节点为止，经过的路径就是一条<strong>长链</strong>。显然，一整棵树会被分成若干条长链，并且每个节点都在恰好一条长链上，每条边要么在长链上，要么把一条长链的顶端连向另一条长链。</p>
+<p>代码如下：</p>
+<pre><code class="language-cpp">
+int dep[1000005],son[1000005];
+void dfs1(int u,int fa)
+{
+    for (int e=head[u];e;e=nex[e]) // 链式前向星
+    {
+        int v=tail[e];
+        if (v==fa) continue;
+        dfs1(v,u);
+        if (dep[v]&gt;dep[son[u]]) son[u]=v; // 寻找长儿子
+    }
+    dep[u]=dep[son[u]]+1; // 统计 u 的 dep
+}
+</code></pre>
+<hr>
+<p>那么这个东西和 DP 又有什么关系呢？</p>
+<p>我们可以采用一个优化策略：对于一个节点 u，我们先对它的长儿子做DP，但这里可以使用一些技巧，让长儿子把 dp 出来的东西直接存到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">f_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 里面去（当然观察 dp 式可以发现这边需要错一位），然后再把其他儿子 dp 出来的东西与 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">f_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 暴力合并。</p>
+<p>这里详细地说一说到底怎么样实现这个优化（貌似其他题解写得都很简略啊……窝看了半天都看不懂，可能是我太菜了）</p>
+<p>首先，我们抛弃传统 DP 的预先为每个节点都申请一片空间的写法（空间开销过大），而是在 DP 的过程中，动态的为节点申请（DP数组的）内存，所以这里我们要采用指针的写法。</p>
+<p>然后，<strong>我们只对每一个长链的顶端节点申请内存</strong>，而对于一条长链上的所有节点，我们让他们可以公用一片空间。具体地说，假设对节点 u 申请了内存之后，设 v 是 u 的长儿子，我们就把 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">f_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 数组的起点（的指针）加一当作 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mi>v</mi></msub></mrow><annotation encoding="application/x-tex">f_v</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight" style="margin-right:0.03588em;">v</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 数组的起点（的指针，下同），以此类推。这也就是上面说的“让长儿子把 dp 出来的东西直接存到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">f_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.8888799999999999em;vertical-align:-0.19444em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 里面去”。当然，申请的内存要能装下一条长链。</p>
+<p>那么显而易见的，使用了这个优化之后可以把时间和空间都减到 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>O</mi><mo>(</mo><mi>n</mi><mo>)</mo></mrow><annotation encoding="application/x-tex">O(n)</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:1em;vertical-align:-0.25em;"></span><span class="mord mathdefault" style="margin-right:0.02778em;">O</span><span class="mopen">(</span><span class="mord mathdefault">n</span><span class="mclose">)</span></span></span></span> 级别的，因为每个节点都只会在它所在的长链顶端被统计（或者说是被暴力合并）一次。</p>
+<p>这部分优化的代码长成这个样子：</p>
+<pre><code class="language-cpp">void dfs2(int u,int fa)
+{
+    f[u][0]=1; // 先算上自己
+    if (son[u])
+    {
+        f[son[u]]=f[u]+1; // 共享内存，这样一步之后，f[son[u]][dep]会被自动保存到f[u][dep-1]
+        dfs2(son[u],u);
+    }
+    for (int e=head[u];e;e=nex[e])
+    {
+        int v=tail[e];
+        if (v==son[u] || v==fa) continue;
+        f[v]=now;now+=dep[v]; // 为 v 节点申请内存，大小等于以 v 为顶端的长链的长度
+        dfs2(v,u);
+        for (int i=1;i&lt;=dep[v];i++)
+        {
+            f[u][i]+=f[v][i-1]; //暴力合并
+        }
+    }
+}
+</code></pre>
+<p>当然，在 dp 开始前要先为以树根为顶端的长链申请内存。</p>
+<p>然而，光有 dp 数组还没用，我们还要统计答案。</p>
+<p>我们可以先令 u 节点的答案为它的长儿子的答案加一。然后在暴力合并的过程当中每次检查当前的 dep 是否优于 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>n</mi><msub><mi>s</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">ans_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> （<span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>n</mi><msub><mi>s</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">ans_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 就是题目要求的东西），如果是的话那就更新答案。</p>
+<p>最后如果发现 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><msub><mi>f</mi><mrow><mi>u</mi><mo separator="true">,</mo><mi>a</mi><mi>n</mi><msub><mi>s</mi><mi>u</mi></msub></mrow></msub><mo>=</mo><mn>1</mn></mrow><annotation encoding="application/x-tex">f_{u,ans_u}=1</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.980548em;vertical-align:-0.286108em;"></span><span class="mord"><span class="mord mathdefault" style="margin-right:0.10764em;">f</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.15139200000000003em;"><span style="top:-2.5500000000000003em;margin-left:-0.10764em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mtight"><span class="mord mathdefault mtight">u</span><span class="mpunct mtight">,</span><span class="mord mathdefault mtight">a</span><span class="mord mathdefault mtight">n</span><span class="mord mtight"><span class="mord mathdefault mtight">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.16454285714285719em;"><span style="top:-2.357em;margin-left:0em;margin-right:0.07142857142857144em;"><span class="pstrut" style="height:2.5em;"></span><span class="sizing reset-size3 size1 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.143em;"><span></span></span></span></span></span></span></span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.286108em;"><span></span></span></span></span></span></span><span class="mspace" style="margin-right:0.2777777777777778em;"></span><span class="mrel">=</span><span class="mspace" style="margin-right:0.2777777777777778em;"></span></span><span class="base"><span class="strut" style="height:0.64444em;vertical-align:0em;"></span><span class="mord">1</span></span></span></span>，即 u 的子树为一条链，无论在哪个深度下都只有一个点的话，那么就把当前节点的答案 <span class="katex"><span class="katex-mathml"><math><semantics><mrow><mi>a</mi><mi>n</mi><msub><mi>s</mi><mi>u</mi></msub></mrow><annotation encoding="application/x-tex">ans_u</annotation></semantics></math></span><span class="katex-html" aria-hidden="true"><span class="base"><span class="strut" style="height:0.58056em;vertical-align:-0.15em;"></span><span class="mord mathdefault">a</span><span class="mord mathdefault">n</span><span class="mord"><span class="mord mathdefault">s</span><span class="msupsub"><span class="vlist-t vlist-t2"><span class="vlist-r"><span class="vlist" style="height:0.151392em;"><span style="top:-2.5500000000000003em;margin-left:0em;margin-right:0.05em;"><span class="pstrut" style="height:2.7em;"></span><span class="sizing reset-size6 size3 mtight"><span class="mord mathdefault mtight">u</span></span></span></span><span class="vlist-s">​</span></span><span class="vlist-r"><span class="vlist" style="height:0.15em;"><span></span></span></span></span></span></span></span></span></span> 设为 0 ，这个应该很好理解。</p>
+<p>最后放上完整的代码：</p>
+<pre><code class="language-cpp">#include &lt;bits/stdc++.h&gt;
+#define debug printf(&quot;Running %s on line %d...\n&quot;,__FUNCTION__,__LINE__)
+#define in inline
+#define re register
+using namespace std;
+typedef long long ll;
+typedef double db;
+in int read()
+{
+    int ans=0,f=1;char c=getchar();
+    for (;!isdigit(c);c=getchar()) if (c=='-') f=-1;
+    for (;isdigit(c);c=getchar()) ans=(ans&lt;&lt;3)+(ans&lt;&lt;1)+(c^48);
+    return ans*f;
+}
+in int cmin(int &amp;a,int b) {return a=min(a,b);}
+in int cmax(int &amp;a,int b) {return a=max(a,b);}
+int n;
+int buf[1000005];
+int *f[1000005],*g[1000005],*now=buf;
+int nex[2000005],head[1000005],tail[2000005],tot;
+int ans[1000005];
+void addedge(int u,int v)
+{
+    nex[++tot]=head[u];
+    head[u]=tot;
+    tail[tot]=v;
+}
+int dep[1000005],son[1000005];
+void dfs1(int u,int fa) // 长链剖分
+{
+    for (int e=head[u];e;e=nex[e])
+    {
+        int v=tail[e];
+        if (v==fa) continue;
+        dfs1(v,u);
+        if (dep[v]&gt;dep[son[u]]) son[u]=v;
+    }
+    dep[u]=dep[son[u]]+1;
+}
+void dfs2(int u,int fa) //做dp
+{
+    f[u][0]=1;
+    if (son[u])
+    {
+        f[son[u]]=f[u]+1; // 共享内存
+        dfs2(son[u],u);
+        ans[u]=ans[son[u]]+1; //从长孩子节点继承答案
+    }
+    for (int e=head[u];e;e=nex[e])
+    {
+        int v=tail[e];
+        if (v==son[u] || v==fa) continue;
+        f[v]=now;now+=dep[v]; // 分配内存
+        dfs2(v,u);
+        for (int i=1;i&lt;=dep[v];i++)
+        {
+            f[u][i]+=f[v][i-1]; //暴力合并
+            if (f[u][i]&gt;f[u][ans[u]] || (f[u][i]==f[u][ans[u]] &amp;&amp; i&lt;ans[u])) ans[u]=i; //更新答案
+        }
+    }
+    if (f[u][ans[u]]==1) ans[u]=0;
+}
+int main()
+{
+    n=read();
+    for (int i=1;i&lt;n;i++)
+    {
+        int u=read(),v=read();
+        addedge(u,v);
+        addedge(v,u);
+    }
+    dfs1(1,0); // 长链剖分
+    f[1]=now;now+=dep[1]; // 为根节点的答案分配内存
+    dfs2(1,0);
+    for (int i=1;i&lt;=n;i++) cout&lt;&lt;ans[i]&lt;&lt;endl;
+    return 0;
+}
+
+</code></pre>
+<p>完结撒花*★,°*:.☆(￣▽￣)/$:*.°★* 。！</p>
+
+              </div>
+              <div class="toc-container">
+                
+              </div>
+            </div>
+          </article>
+        </div>
+
+        
+          <div class="next-post">
+            <div class="next">下一篇</div>
+            <a href="https://thomasguo666.github.io/post/solution-p2278/">
+              <h3 class="post-title">
+                题解 P2278 【[HNOI2003]操作系统】
+              </h3>
+            </a>
+          </div>
+        
+
+        
+          
+            <link rel="stylesheet" href="https://unpkg.com/gitalk/dist/gitalk.css">
+<script src="https://unpkg.com/gitalk/dist/gitalk.min.js"></script>
+
+<div id="gitalk-container"></div>
+
+<script>
+
+  var gitalk = new Gitalk({
+    clientID: 'a7f0f9ffa440b92b250b',
+    clientSecret: '98d6ae5764b67baff9d0fd789cf6d8de5fc16476',
+    repo: 'thomasguo666.github.io',
+    owner: 'Thomasguo666',
+    admin: ['Thomasguo666'],
+    id: (location.pathname).substring(0, 49),      // Ensure uniqueness and length less than 50
+    distractionFreeMode: false  // Facebook-like distraction free mode
+  })
+
+  gitalk.render('gitalk-container')
+
+</script>
+
+          
+
+          
+        
+
+        <div class="site-footer">
+  Powered by <a href="https://github.com/getgridea/gridea" target="_blank">Gridea</a>
+  <a class="rss" href="https://thomasguo666.github.io/atom.xml" target="_blank">
+    <i class="ri-rss-line"></i> RSS
+  </a>
+</div>
+
+      </div>
+    </div>
+
+    <script>
+      hljs.initHighlightingOnLoad()
+
+      let mainNavLinks = document.querySelectorAll(".markdownIt-TOC a");
+
+      // This should probably be throttled.
+      // Especially because it triggers during smooth scrolling.
+      // https://lodash.com/docs/4.17.10#throttle
+      // You could do like...
+      // window.addEventListener("scroll", () => {
+      //    _.throttle(doThatStuff, 100);
+      // });
+      // Only not doing it here to keep this Pen dependency-free.
+
+      window.addEventListener("scroll", event => {
+        let fromTop = window.scrollY;
+
+        mainNavLinks.forEach((link, index) => {
+          let section = document.getElementById(decodeURI(link.hash).substring(1));
+          let nextSection = null
+          if (mainNavLinks[index + 1]) {
+            nextSection = document.getElementById(decodeURI(mainNavLinks[index + 1].hash).substring(1));
+          }
+          if (section.offsetTop <= fromTop) {
+            if (nextSection) {
+              if (nextSection.offsetTop > fromTop) {
+                link.classList.add("current");
+              } else {
+                link.classList.remove("current");    
+              }
+            } else {
+              link.classList.add("current");
+            }
+          } else {
+            link.classList.remove("current");
+          }
+        });
+      });
+
+    </script>
+  </body>
+</html>
